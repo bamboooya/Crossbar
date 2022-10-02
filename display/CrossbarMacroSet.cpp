@@ -5,7 +5,7 @@ CrossbarMacroSet::CrossbarMacroSet(IAshitaCore* pAshitaCore, CrossbarSettings* p
     , pSettings(pSettings)
     , pBindings(pBindings)
 {
-    if (mode == MacroMode::RightTrigger)
+    if (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder)
     {
         mOffsetX = pSettings->pSubPanel->PanelWidth + pSettings->pSubPanel->PanelSpacing;
         mOffsetY = 0;
@@ -16,12 +16,12 @@ CrossbarMacroSet::CrossbarMacroSet(IAshitaCore* pAshitaCore, CrossbarSettings* p
         mOffsetY = 0;
     }
 
-    SingleMacroInfo_t* macros[8] = { 0 };
+    SingleMacroInfo_t* macros[12] = { 0 };
     SingleMacroInfo_t* layers[3];
     layers[0] = pBindings->pGlobalDefaults->Triggers[(int)mode].Buttons;
     layers[1] = pBindings->pJobSettings->pJobDefaults->Triggers[(int)mode].Buttons;
     layers[2] = (*pBindings->pJobSettings->mPaletteIterator)->pBindings->Triggers[(int)mode].Buttons;
-    for (int x = 0; x < 8; x++)
+    for (int x = 0; x < 12; x++)
     {
         for (int y = 0; y < 3; y++)
         {
@@ -37,23 +37,23 @@ CrossbarMacroSet::CrossbarMacroSet(IAshitaCore* pAshitaCore, CrossbarSettings* p
 
         if (macros[x] == NULL) 
         {
-            pMacros[x] = new CrossbarEmptyMacro(pAshitaCore, pSettings, SingleMacroInfo_t(), (mode == MacroMode::RightTrigger), x);
+            pMacros[x] = new CrossbarEmptyMacro(pAshitaCore, pSettings, SingleMacroInfo_t(), (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder), x);
         }
         else
         {
             SingleMacroInfo_t* info = macros[x];
             if (info->Type == IconType::Ability)
-                pMacros[x] = new CrossbarAbilityMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger),  x);
+                pMacros[x] = new CrossbarAbilityMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder),  x);
             else if (info->Type == IconType::Command)
-                pMacros[x] = new CrossbarCommandMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger), x);
+                pMacros[x] = new CrossbarCommandMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder), x);
             else if (info->Type == IconType::Item)
-                pMacros[x] = new CrossbarItemMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger), x);
+                pMacros[x] = new CrossbarItemMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder), x);
             else if (info->Type == IconType::Spell)
-                pMacros[x] = new CrossbarSpellMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger), x);
+                pMacros[x] = new CrossbarSpellMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder), x);
             else if (info->Type == IconType::Weaponskill)
-                pMacros[x] = new CrossbarWeaponskillMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger), x);
+                pMacros[x] = new CrossbarWeaponskillMacro(pAshitaCore, pSettings, *info, (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder), x);
             else
-                pMacros[x] = new CrossbarEmptyMacro(pAshitaCore, pSettings, SingleMacroInfo_t(), (mode == MacroMode::RightTrigger), x);
+                pMacros[x] = new CrossbarEmptyMacro(pAshitaCore, pSettings, SingleMacroInfo_t(), (mode == MacroMode::RightTrigger || mode == MacroMode::RightShoulder), x);
         }
     }
 
@@ -61,7 +61,7 @@ CrossbarMacroSet::CrossbarMacroSet(IAshitaCore* pAshitaCore, CrossbarSettings* p
 }
 CrossbarMacroSet::~CrossbarMacroSet()
 {
-    for (int x = 0; x < 8; x++)
+    for (int x = 0; x < 12; x++)
     {
         if (pMacros[x])
         {

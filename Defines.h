@@ -30,18 +30,22 @@ class InputHandler;
 
 enum class MacroButton
 {
-    DpadUp        = 0,
-    DpadRight     = 1,
-    DpadDown      = 2,
-    DpadLeft      = 3,
-    ButtonUp      = 4,
-    ButtonRight   = 5,
-    ButtonDown    = 6,
-    ButtonLeft    = 7,
-    ShoulderLeft  = 8,
-    ShoulderRight = 9,
-    Confirm       = 10,
-    Cancel        = 11
+    DpadUp          = 0,
+    DpadRight       = 1,
+    DpadDown        = 2,
+    DpadLeft        = 3,
+    ButtonUp        = 4,
+    ButtonRight     = 5,
+    ButtonDown      = 6,
+    ButtonLeft      = 7,
+    LeftStickPress  = 8,
+    RightStickPress = 9,
+    PlayStation     = 10,
+    TouchPadPress   = 11,
+    Share           = 12,
+    Option          = 13,
+    Confirm         = 14,
+    Cancel          = 15
 };
 enum class MacroMode
 {
@@ -51,7 +55,9 @@ enum class MacroMode
     BothTriggersRT = 3,
     LeftTriggerDT  = 4,
     RightTriggerDT = 5,
-    NoTrigger      = 6
+    LeftShoulder   = 6,
+    RightShoulder  = 7,
+    NoTrigger      = 8
 };
 
 #define SAFE_DELETE(a) \

@@ -101,14 +101,20 @@ void CrossbarXInput::HandleState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	data.Dpad[1] = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
 	data.Dpad[2] = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
 	data.Dpad[3] = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+    data.Share           = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_BACK);
+    data.Option          = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_START);
+    data.LeftStickPress  = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB);
+    data.RightStickPress = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB);
 	pInput->HandleState(data);
 }
 void CrossbarXInput::UpdateState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	if ((pState->Gamepad.bLeftTrigger) || (pState->Gamepad.bRightTrigger) || (pInput->GetMenuActive()))
+    if ((pState->Gamepad.bLeftTrigger) || (pState->Gamepad.bRightTrigger) || (pState->Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) || (pState->Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) || (pInput->GetMenuActive()))
 	{
 		pState->Gamepad.wButtons &= mMacroBlockMask;
 	}
 	pState->Gamepad.bLeftTrigger = 0;
 	pState->Gamepad.bRightTrigger = 0;
+    pState->Gamepad.wButtons = pState->Gamepad.wButtons & ~XINPUT_GAMEPAD_LEFT_SHOULDER;
+    pState->Gamepad.wButtons = pState->Gamepad.wButtons & ~XINPUT_GAMEPAD_RIGHT_SHOULDER;
 }

@@ -290,52 +290,47 @@ std::string Crossbar::GetMenuHelpText()
 }
 void Crossbar::HandleButtonPress(MacroButton button)
 {
-    if (button == MacroButton::ShoulderLeft)
+    if (button == MacroButton::Share)
     {
-        if ((mCurrentMode == MacroMode::LeftTrigger) || (mCurrentMode == MacroMode::LeftTriggerDT))
+        if (pBindings)
         {
-            if (pBindings)
+            if (pBindings->pJobSettings)
             {
-                if (pBindings->pJobSettings)
+                if (pBindings->pJobSettings->mPaletteList.size() > 1)
                 {
-                    if (pBindings->pJobSettings->mPaletteList.size() > 1)
+                    if (pBindings->pJobSettings->mPaletteIterator == pBindings->pJobSettings->mPaletteList.begin())
                     {
-                        if (pBindings->pJobSettings->mPaletteIterator == pBindings->pJobSettings->mPaletteList.begin())
-                        {
-                            pBindings->pJobSettings->mPaletteIterator = pBindings->pJobSettings->mPaletteList.end();
-                        }
-                        pBindings->pJobSettings->mPaletteIterator--;
-                        pBindings->mRedraw = true;
+                        pBindings->pJobSettings->mPaletteIterator = pBindings->pJobSettings->mPaletteList.end();
                     }
+                    pBindings->pJobSettings->mPaletteIterator--;
+                    pBindings->mRedraw = true;
                 }
             }
         }
         return;
     }
 
-    if (button == MacroButton::ShoulderRight)
+    if (button == MacroButton::Option)
     {
-        if ((mCurrentMode == MacroMode::RightTrigger) || (mCurrentMode == MacroMode::RightTriggerDT))
+        if (pBindings)
         {
-            if (pBindings)
+            if (pBindings->pJobSettings)
             {
-                if (pBindings->pJobSettings)
+                if (pBindings->pJobSettings->mPaletteList.size() > 1)
                 {
-                    if (pBindings->pJobSettings->mPaletteList.size() > 1)
+                    pBindings->pJobSettings->mPaletteIterator++;
+                    if (pBindings->pJobSettings->mPaletteIterator == pBindings->pJobSettings->mPaletteList.end())
                     {
-                        pBindings->pJobSettings->mPaletteIterator++;
-                        if (pBindings->pJobSettings->mPaletteIterator == pBindings->pJobSettings->mPaletteList.end())
-                        {
-                            pBindings->pJobSettings->mPaletteIterator = pBindings->pJobSettings->mPaletteList.begin();
-                        }
-                        pBindings->mRedraw = true;
+                        pBindings->pJobSettings->mPaletteIterator = pBindings->pJobSettings->mPaletteList.begin();
                     }
+                    pBindings->mRedraw = true;
                 }
             }
         }
         return;
     }
 
+    // handle menu
     if (pMenu)
     {
         if (mCurrentMode == MacroMode::NoTrigger)
@@ -362,7 +357,13 @@ void Crossbar::HandleButtonPress(MacroButton button)
             pMenu->HandleMacro(button, mCurrentMode);
         }
     }
+    // trigger/shoulder + button macros (dpat, x, circle, triangle, square)
     else if ((pCanvas) && (mCurrentMode != MacroMode::NoTrigger) && ((int)button < 8))
+    {
+        pCanvas->HandleButton(button, mCurrentMode);
+    }
+    // no trigger + button macros (left stick press, right stick press, playstation, touchscreen press)
+    else if ((pCanvas) && ((int)button >= 8) && ((int)button <= 11))
     {
         pCanvas->HandleButton(button, mCurrentMode);
     }

@@ -96,6 +96,14 @@ MacroMode InputHandler::GetMacroMode(InputData_t input)
 		else
 			return MacroMode::RightTrigger;
 	}
+    else if (input.LeftShoulder)
+    {
+        return MacroMode::LeftShoulder;
+    }
+    else if (input.RightShoulder)
+    {
+        return MacroMode::RightShoulder;
+    }
 	else
 	{
 		return MacroMode::NoTrigger;
@@ -124,10 +132,18 @@ void InputHandler::HandleMenuCombo(InputData_t input)
 }
 void InputHandler::HandleButtons(InputData_t input)
 {
-	if ((input.LeftShoulder) && (!mLastState.LeftShoulder))
-		pCrossbar->HandleButtonPress(MacroButton::ShoulderLeft);
-	if ((input.RightShoulder) && (!mLastState.RightShoulder))
-		pCrossbar->HandleButtonPress(MacroButton::ShoulderRight);
+    if ((input.Share) && (!mLastState.Share))
+		pCrossbar->HandleButtonPress(MacroButton::Share);
+    if ((input.Option) && (!mLastState.Option))
+		pCrossbar->HandleButtonPress(MacroButton::Option);
+    if ((input.LeftStickPress) && (!mLastState.LeftStickPress))
+        pCrossbar->HandleButtonPress(MacroButton::LeftStickPress);
+    if ((input.RightStickPress) && (!mLastState.RightStickPress))
+        pCrossbar->HandleButtonPress(MacroButton::RightStickPress);
+    if ((input.PlayStation) && (!mLastState.PlayStation))
+        pCrossbar->HandleButtonPress(MacroButton::PlayStation);
+    if ((input.TouchPadPress) && (!mLastState.TouchPadPress))
+        pCrossbar->HandleButtonPress(MacroButton::TouchPadPress);
 	for (int x = 0; x < 4; x++)
 	{
 		if ((input.Dpad[x]) && (!mLastState.Dpad[x]))

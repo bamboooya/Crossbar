@@ -24,7 +24,7 @@ private:
     IAshitaCore* pAshitaCore;
     CrossbarSettings* pSettings;
     CrossbarBindings* pBindings;
-    CrossbarMacro* pMacros[8];
+    CrossbarMacro* pMacros[12];
     int mOffsetX;
     int mOffsetY;
 

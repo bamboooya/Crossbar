@@ -11,12 +11,24 @@ struct InputData_t
     bool RightShoulder;
     bool Dpad[4];
     bool Buttons[4];
+    bool Share;
+    bool Option;
+    bool LeftStickPress;
+    bool RightStickPress;
+    bool PlayStation;
+    bool TouchPadPress;
 
     InputData_t()
         : LeftTrigger(false)
         , RightTrigger(false)
         , LeftShoulder(false)
         , RightShoulder(false)
+        , Share(false)
+        , Option(false)
+        , LeftStickPress(false)
+        , RightStickPress(false)
+        , PlayStation(false)
+        , TouchPadPress(false)
     {
         for (int x = 0; x < 4; x++)
         {

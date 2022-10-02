@@ -16,13 +16,15 @@ private:
 	IAshitaCore* pAshitaCore;
 	GdiDIB* pMainDisplay;
 	IPrimitiveObject* pMainPrimitive;
+    GdiDIB* pShoulderDisplay;
+    IPrimitiveObject* pShoulderPrimitive;
 	GdiDIB* pSubDisplay;
 	IPrimitiveObject* pSubPrimitive;
 
 	CrossbarBindings* pBindings;
 	CrossbarSettings* pSettings;
 
-	CrossbarMacroSet* pMacros[6];
+	CrossbarMacroSet* pMacros[9];
     MacroMode mLastSingleMode;
 
 public:

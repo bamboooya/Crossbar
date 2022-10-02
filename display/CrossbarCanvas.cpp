@@ -10,6 +10,11 @@ CrossbarCanvas::CrossbarCanvas(IAshitaCore* pAshitaCore, CrossbarSettings* pSett
     pMainDisplay->GetGraphics()->SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
     pMainDisplay->GetGraphics()->SetTextRenderingHint(Gdiplus::TextRenderingHintClearTypeGridFit);
     pMainPrimitive = pAshitaCore->GetPrimitiveManager()->Create("CrossbarMain");
+    pShoulderDisplay   = new GdiDIB(pAshitaCore->GetDirect3DDevice(), (pSettings->pSubPanel->PanelWidth * 2) + pSettings->pSubPanel->PanelSpacing, pSettings->pSubPanel->PanelHeight);
+    pShoulderDisplay->GetGraphics()->SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
+    pShoulderDisplay->GetGraphics()->SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
+    pShoulderDisplay->GetGraphics()->SetTextRenderingHint(Gdiplus::TextRenderingHintClearTypeGridFit);
+    pShoulderPrimitive = pAshitaCore->GetPrimitiveManager()->Create("CrossbarShoulder");
     pSubDisplay = new GdiDIB(pAshitaCore->GetDirect3DDevice(), pSettings->pSubPanel->PanelWidth, pSettings->pSubPanel->PanelHeight);
     pSubDisplay->GetGraphics()->SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
     pSubDisplay->GetGraphics()->SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
@@ -17,12 +22,13 @@ CrossbarCanvas::CrossbarCanvas(IAshitaCore* pAshitaCore, CrossbarSettings* pSett
     pSubPrimitive = pAshitaCore->GetPrimitiveManager()->Create("CrossbarSub");
     mLastSingleMode = MacroMode::NoTrigger;
     
-    RECT rect;
-    GetWindowRect(pAshitaCore->GetProperties()->GetFinalFantasyHwnd(), &rect);
+    uint32_t window_width = Ashita::Registry::GetValue(Ashita::LanguageId::English, "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\PlayOnlineUS\\SquareEnix\\FinalFantasyXI", "0001");
+    uint32_t window_height = Ashita::Registry::GetValue(Ashita::LanguageId::English, "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\PlayOnlineUS\\SquareEnix\\FinalFantasyXI", "0002");
 
+    // main panel
     if (pSettings->mConfig.MainPanelX == -1)
     {
-        pMainPrimitive->SetPositionX((rect.right - rect.left - ((pSettings->pSubPanel->PanelWidth * 2) + pSettings->pSubPanel->PanelSpacing)) / 2);
+        pMainPrimitive->SetPositionX((window_width - ((pSettings->pSubPanel->PanelWidth * 2) + pSettings->pSubPanel->PanelSpacing)) / 2);
     }
     else
     {
@@ -30,16 +36,35 @@ CrossbarCanvas::CrossbarCanvas(IAshitaCore* pAshitaCore, CrossbarSettings* pSett
     }
     if (pSettings->mConfig.MainPanelY < 0)
     {
-        pMainPrimitive->SetPositionY((rect.bottom - rect.top) + pSettings->mConfig.MainPanelY - pSettings->pSubPanel->PanelHeight);
+        pMainPrimitive->SetPositionY(window_height + pSettings->mConfig.MainPanelY - pSettings->pSubPanel->PanelHeight);
     }
     else
     {
         pMainPrimitive->SetPositionY(pSettings->mConfig.MainPanelY);
     }
 
+    // shoulder panel
+    if (pSettings->mConfig.ShoulderPanelX == -1)
+    {
+        pShoulderPrimitive->SetPositionX((window_width - ((pSettings->pSubPanel->PanelWidth * 2) + pSettings->pSubPanel->PanelSpacing)) / 2);
+    }
+    else
+    {
+        pShoulderPrimitive->SetPositionX(pSettings->mConfig.ShoulderPanelX);
+    }
+    if (pSettings->mConfig.ShoulderPanelY < 0)
+    {
+        pShoulderPrimitive->SetPositionY(window_height + pSettings->mConfig.ShoulderPanelY - pSettings->pSubPanel->PanelHeight);
+    }
+    else
+    {
+        pShoulderPrimitive->SetPositionY(pSettings->mConfig.ShoulderPanelY);
+    }
+
+    // sub panel
     if (pSettings->mConfig.SubPanelX == -1)
     {
-        pSubPrimitive->SetPositionX((rect.right - rect.left - pSettings->pSubPanel->PanelWidth) / 2);
+        pSubPrimitive->SetPositionX((window_width - pSettings->pSubPanel->PanelWidth) / 2);
     }
     else
     {
@@ -47,14 +72,14 @@ CrossbarCanvas::CrossbarCanvas(IAshitaCore* pAshitaCore, CrossbarSettings* pSett
     }
     if (pSettings->mConfig.SubPanelY < 0)
     {
-        pSubPrimitive->SetPositionY((rect.bottom - rect.top) + pSettings->mConfig.SubPanelY - pSettings->pSubPanel->PanelHeight);
+        pSubPrimitive->SetPositionY(window_height + pSettings->mConfig.SubPanelY - pSettings->pSubPanel->PanelHeight);
     }
     else
     {
         pSubPrimitive->SetPositionY(pSettings->mConfig.SubPanelY);
     }
 
-    for (int x = 0; x < 6; x++)
+    for (int x = 0; x < 9; x++)
     {
         pMacros[x] = new CrossbarMacroSet(pAshitaCore, pSettings, pBindings, (MacroMode)x);
     }
@@ -65,7 +90,9 @@ CrossbarCanvas::~CrossbarCanvas()
     delete pSubDisplay;
     pAshitaCore->GetPrimitiveManager()->Delete("CrossbarMain");
     delete pMainDisplay;
-    for (int x = 0; x < 6; x++)
+    pAshitaCore->GetPrimitiveManager()->Delete("CrossbarShoulder");
+    delete pShoulderDisplay;
+    for (int x = 0; x < 9; x++)
     {
         delete pMacros[x];
     }
@@ -79,7 +106,8 @@ void CrossbarCanvas::Draw(MacroMode mode)
         pBindings->mRedraw = false;
     }
 
-    if ((mode == MacroMode::LeftTrigger) || (mode == MacroMode::RightTrigger) || (mode == MacroMode::NoTrigger))
+    // if a single trigger/shoulder or no trigger is pressed, render the mainpanel and shoulderpanel
+    if ((mode == MacroMode::LeftTrigger) || (mode == MacroMode::RightTrigger) || (mode == MacroMode::LeftShoulder) || (mode == MacroMode::RightShoulder) || (mode == MacroMode::NoTrigger))
     {
         pSubPrimitive->SetVisible(false);
         bool reapply = pMacros[(int)MacroMode::LeftTrigger]->Draw(pMainDisplay);
@@ -88,7 +116,15 @@ void CrossbarCanvas::Draw(MacroMode mode)
             pMainDisplay->ApplyToPrimitiveObject(pMainPrimitive);
         }
         pMainPrimitive->SetVisible(true);
+
+        reapply = pMacros[(int)MacroMode::LeftShoulder]->Draw(pShoulderDisplay);
+        if (pMacros[(int)MacroMode::RightShoulder]->Draw(pShoulderDisplay) || reapply)
+        {
+            pShoulderDisplay->ApplyToPrimitiveObject(pShoulderPrimitive);
+        }
+        pShoulderPrimitive->SetVisible(true);
     }
+    // if a dual trigger is pressed, render the subpanel
     else
     {
         if (mLastSingleMode != mode)
@@ -113,12 +149,13 @@ void CrossbarCanvas::Hide()
 {
     pMainPrimitive->SetVisible(false);
     pSubPrimitive->SetVisible(false);
+    pShoulderPrimitive->SetVisible(false);
 }
 void CrossbarCanvas::UpdateBindings(CrossbarBindings* pNewBindings)
 {
     delete pBindings;
     pBindings = pNewBindings;
-    for (int x = 0; x < 6; x++)
+    for (int x = 0; x < 9; x++)
     {
         delete pMacros[x];
         pMacros[x] = new CrossbarMacroSet(pAshitaCore, pSettings, pBindings, (MacroMode)x);
@@ -126,7 +163,7 @@ void CrossbarCanvas::UpdateBindings(CrossbarBindings* pNewBindings)
 }
 void CrossbarCanvas::UpdatePalette()
 {
-    for (int x = 0; x < 6; x++)
+    for (int x = 0; x < 9; x++)
     {
         delete pMacros[x];
         pMacros[x] = new CrossbarMacroSet(pAshitaCore, pSettings, pBindings, (MacroMode)x);

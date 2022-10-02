@@ -46,9 +46,9 @@ void CrossbarEditPalette::HandleSubMenu(FontMenuCompletionData_t data)
 	{
 		strcpy_s(mCompletionData.Result, "CLEAR_BINDINGS");
 		mIsFinished = true;
-		for (int x = 0; x < 6; x++)
+		for (int x = 0; x < 9; x++)
 		{
-			for (int y = 0; y < 8; y++)
+			for (int y = 0; y < 12; y++)
 			{
 				pPalette->pBindings->Triggers[x].Buttons[y] = SingleMacroInfo_t();
 			}

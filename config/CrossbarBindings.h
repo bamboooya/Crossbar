@@ -47,7 +47,7 @@ struct SingleMacroInfo_t
 };
 struct SingleTriggerInfo_t
 {
-    SingleMacroInfo_t Buttons[8];
+    SingleMacroInfo_t Buttons[12];
 
     SingleTriggerInfo_t();
     SingleTriggerInfo_t(IAshitaCore* pAshitaCore, CrossbarSettings* pSettings, xml_node<>* baseNode);
@@ -56,7 +56,7 @@ struct SingleTriggerInfo_t
 };
 struct SingleBindingInfo_t
 {
-    SingleTriggerInfo_t Triggers[6];
+    SingleTriggerInfo_t Triggers[9];
 
     SingleBindingInfo_t();
     SingleBindingInfo_t(IAshitaCore* pAshitaCore, CrossbarSettings* pSettings, xml_node<>* baseNode);

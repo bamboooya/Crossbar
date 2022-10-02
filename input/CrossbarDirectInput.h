@@ -28,7 +28,9 @@ private:
         12, //L2 Axis
         16, //R2 Axis
         offsetof(DIJOYSTATE, rgbButtons) + 6,
-        offsetof(DIJOYSTATE, rgbButtons) + 7
+        offsetof(DIJOYSTATE, rgbButtons) + 7,
+        offsetof(DIJOYSTATE, rgbButtons) + 4,
+        offsetof(DIJOYSTATE, rgbButtons) + 5
     };
 
     std::list<int> mMacroBlockOffsets = {
@@ -36,12 +38,11 @@ private:
         offsetof(DIJOYSTATE, rgbButtons) + 1,
         offsetof(DIJOYSTATE, rgbButtons) + 2,
         offsetof(DIJOYSTATE, rgbButtons) + 3,
-        offsetof(DIJOYSTATE, rgbButtons) + 4,
-        offsetof(DIJOYSTATE, rgbButtons) + 5,
         offsetof(DIJOYSTATE, rgdwPOV)
     };
 
     bool mTriggers[2];
+    bool mShoulders[2];
 
 public:
     CrossbarDirectInput(InputHandler* pInput);

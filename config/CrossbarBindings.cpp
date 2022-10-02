@@ -253,6 +253,22 @@ SingleTriggerInfo_t::SingleTriggerInfo_t(IAshitaCore* pAshitaCore, CrossbarSetti
         {
             Buttons[(int)MacroButton::ButtonLeft] = SingleMacroInfo_t(pAshitaCore, pSettings, subNode);
         }
+        else if (strcmp(subNode->name(), "leftstick") == 0)
+        {
+            Buttons[(int)MacroButton::LeftStickPress] = SingleMacroInfo_t(pAshitaCore, pSettings, subNode);
+        }
+        else if (strcmp(subNode->name(), "rightstick") == 0)
+        {
+            Buttons[(int)MacroButton::RightStickPress] = SingleMacroInfo_t(pAshitaCore, pSettings, subNode);
+        }
+        else if (strcmp(subNode->name(), "playstation") == 0)
+        {
+            Buttons[(int)MacroButton::PlayStation] = SingleMacroInfo_t(pAshitaCore, pSettings, subNode);
+        }
+        else if (strcmp(subNode->name(), "touchpad") == 0)
+        {
+            Buttons[(int)MacroButton::TouchPadPress] = SingleMacroInfo_t(pAshitaCore, pSettings, subNode);
+        }
     }
 }
 const char* SingleTriggerInfo_t::GetButtonTag(int index)
@@ -275,12 +291,20 @@ const char* SingleTriggerInfo_t::GetButtonTag(int index)
         return "buttondown";
     case 7:
         return "buttonleft";
+    case 8:
+        return "leftstick";
+    case 9:
+        return "rightstick";
+    case 10:
+        return "playstation";
+    case 11:
+        return "touchpad";
     }
     return "";
 }
 void SingleTriggerInfo_t::Write(std::ofstream* stream, int depth)
 {
-    for (int x = 0; x < 8; x++)
+    for (int x = 0; x < 12; x++)
     {
         if (Buttons[x].Type == IconType::None)
             continue;
@@ -326,6 +350,18 @@ SingleBindingInfo_t::SingleBindingInfo_t(IAshitaCore* pAshitaCore, CrossbarSetti
         {
             Triggers[(int)MacroMode::RightTriggerDT] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
         }
+        else if (strcmp(subNode->name(), "leftshoulder") == 0)
+        {
+            Triggers[(int)MacroMode::LeftShoulder] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
+        }
+        else if (strcmp(subNode->name(), "rightshoulder") == 0)
+        {
+            Triggers[(int)MacroMode::RightShoulder] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
+        }
+        else if (strcmp(subNode->name(), "notrigger") == 0)
+        {
+            Triggers[(int)MacroMode::NoTrigger] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
+        }
     }
 }
 void SingleBindingInfo_t::Write(std::ofstream* stream, int depth)
@@ -364,6 +400,24 @@ void SingleBindingInfo_t::Write(std::ofstream* stream, int depth)
     *stream << std::string(depth * 4, ' ') << "<righttriggerdt>\n";
     Triggers[(int)MacroMode::RightTriggerDT].Write(stream, depth + 1);
     *stream << std::string(depth * 4, ' ') << "</righttriggerdt>\n";
+    *stream << std::string(depth * 4, ' ') << "\n";
+
+    *stream << std::string(depth * 4, ' ') << "<!--These bindings are for left shoulder only.-->\n";
+    *stream << std::string(depth * 4, ' ') << "<leftshoulder>\n";
+    Triggers[(int)MacroMode::LeftShoulder].Write(stream, depth + 1);
+    *stream << std::string(depth * 4, ' ') << "</leftshoulder>\n";
+    *stream << std::string(depth * 4, ' ') << "\n";
+
+    *stream << std::string(depth * 4, ' ') << "<!--These bindings are for right shoulder only.-->\n";
+    *stream << std::string(depth * 4, ' ') << "<rightshoulder>\n";
+    Triggers[(int)MacroMode::RightShoulder].Write(stream, depth + 1);
+    *stream << std::string(depth * 4, ' ') << "</rightshoulder>\n";
+    *stream << std::string(depth * 4, ' ') << "\n";
+
+    *stream << std::string(depth * 4, ' ') << "<!--These bindings are for no trigger only.-->\n";
+    *stream << std::string(depth * 4, ' ') << "<notrigger>\n";
+    Triggers[(int)MacroMode::NoTrigger].Write(stream, depth + 1);
+    *stream << std::string(depth * 4, ' ') << "</notrigger>\n";
     *stream << std::string(depth * 4, ' ') << "\n";
 }
 

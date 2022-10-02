@@ -24,6 +24,8 @@ CrossbarDirectInput::CrossbarDirectInput(InputHandler* pInput)
 	mHookActive = false;
 	mTriggers[0] = false;
 	mTriggers[1] = false;
+    mShoulders[0] = false;
+    mShoulders[1] = false;
 	DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)&pDirectInput, NULL);
 }
 CrossbarDirectInput::~CrossbarDirectInput()
@@ -155,14 +157,20 @@ void CrossbarDirectInput::HandleFoundDevice(GUID guid)
 void CrossbarDirectInput::HandleState(DIJOYSTATE* pState)
 {
 	InputData_t data;
-	data.LeftTrigger = (pState->rgbButtons[6] & 0x80);
-	data.RightTrigger = (pState->rgbButtons[7] & 0x80);
-	data.Buttons[0] = (pState->rgbButtons[3] & 0x80);
-	data.Buttons[1] = (pState->rgbButtons[2] & 0x80);
-	data.Buttons[2] = (pState->rgbButtons[1] & 0x80);
-	data.Buttons[3] = (pState->rgbButtons[0] & 0x80);
-	data.LeftShoulder = (pState->rgbButtons[4] & 0x80);
-	data.RightShoulder = (pState->rgbButtons[5] & 0x80);
+    data.LeftTrigger     = (pState->rgbButtons[6] & 0x80);
+    data.RightTrigger    = (pState->rgbButtons[7] & 0x80);
+    data.Buttons[0]      = (pState->rgbButtons[3] & 0x80);
+    data.Buttons[1]      = (pState->rgbButtons[2] & 0x80);
+    data.Buttons[2]      = (pState->rgbButtons[1] & 0x80);
+    data.Buttons[3]      = (pState->rgbButtons[0] & 0x80);
+    data.LeftShoulder    = (pState->rgbButtons[4] & 0x80);
+    data.RightShoulder   = (pState->rgbButtons[5] & 0x80);
+    data.Share           = (pState->rgbButtons[8] & 0x80);
+    data.Option          = (pState->rgbButtons[9] & 0x80);
+    data.LeftStickPress  = (pState->rgbButtons[10] & 0x80);
+    data.RightStickPress = (pState->rgbButtons[11] & 0x80);
+    data.PlayStation     = (pState->rgbButtons[12] & 0x80);
+    data.TouchPadPress   = (pState->rgbButtons[13] & 0x80);
 
 	switch (pState->rgdwPOV[0])
 	{
@@ -180,21 +188,29 @@ void CrossbarDirectInput::HandleState(DIJOYSTATE* pState)
 		break;
 	}
 
-	mTriggers[0] = data.LeftTrigger;
-	mTriggers[1] = data.RightTrigger;
+	mTriggers[0]  = data.LeftTrigger;
+    mTriggers[1]  = data.RightTrigger;
+    mShoulders[0] = data.LeftShoulder;
+    mShoulders[1] = data.RightShoulder;
 	pInput->HandleState(data);
 }
 void CrossbarDirectInput::HandleStateExtended(DIJOYSTATE2* pState)
 {
 	InputData_t data;
-	data.LeftTrigger = (pState->rgbButtons[6] & 0x80);
-	data.RightTrigger = (pState->rgbButtons[7] & 0x80);
-	data.Buttons[0] = (pState->rgbButtons[3] & 0x80);
-	data.Buttons[1] = (pState->rgbButtons[2] & 0x80);
-	data.Buttons[2] = (pState->rgbButtons[1] & 0x80);
-	data.Buttons[3] = (pState->rgbButtons[0] & 0x80);
-	data.LeftShoulder = (pState->rgbButtons[4] & 0x80);
-	data.RightShoulder = (pState->rgbButtons[5] & 0x80);
+    data.LeftTrigger     = (pState->rgbButtons[6] & 0x80);
+    data.RightTrigger    = (pState->rgbButtons[7] & 0x80);
+    data.Buttons[0]      = (pState->rgbButtons[3] & 0x80);
+    data.Buttons[1]      = (pState->rgbButtons[2] & 0x80);
+    data.Buttons[2]      = (pState->rgbButtons[1] & 0x80);
+    data.Buttons[3]      = (pState->rgbButtons[0] & 0x80);
+    data.LeftShoulder    = (pState->rgbButtons[4] & 0x80);
+    data.RightShoulder   = (pState->rgbButtons[5] & 0x80);
+    data.Share           = (pState->rgbButtons[8] & 0x80);
+    data.Option          = (pState->rgbButtons[9] & 0x80);
+    data.LeftStickPress  = (pState->rgbButtons[10] & 0x80);
+    data.RightStickPress = (pState->rgbButtons[11] & 0x80);
+    data.PlayStation     = (pState->rgbButtons[12] & 0x80);
+    data.TouchPadPress   = (pState->rgbButtons[13] & 0x80);
 
 	switch (pState->rgdwPOV[0])
 	{
@@ -212,8 +228,10 @@ void CrossbarDirectInput::HandleStateExtended(DIJOYSTATE2* pState)
 		break;
 	}
 
-	mTriggers[0] = data.LeftTrigger;
-	mTriggers[1] = data.RightTrigger;
+	mTriggers[0]  = data.LeftTrigger;
+    mTriggers[1]  = data.RightTrigger;
+    mShoulders[0] = data.LeftShoulder;
+    mShoulders[1] = data.RightShoulder;
 	pInput->HandleState(data);
 }
 void CrossbarDirectInput::UpdateData(IDirectInputDevice8A* pDevice, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags)
@@ -234,10 +252,14 @@ void CrossbarDirectInput::UpdateData(IDirectInputDevice8A* pDevice, DWORD cbObje
 			mTriggers[0] = (pData.dwData & 0x80);
 		if (pData.dwOfs == offsetof(DIJOYSTATE, rgbButtons) + 7)
 			mTriggers[1] = (pData.dwData & 0x80);
+        if (pData.dwOfs == offsetof(DIJOYSTATE, rgbButtons) + 4)
+            mShoulders[0] = (pData.dwData & 0x80);
+        if (pData.dwOfs == offsetof(DIJOYSTATE, rgbButtons) + 5)
+            mShoulders[1] = (pData.dwData & 0x80);
 
 		bool autoBlock = (std::find(mAlwaysBlockOffsets.begin(), mAlwaysBlockOffsets.end(), pData.dwOfs) != mAlwaysBlockOffsets.end());
 
-		if (autoBlock || ((mTriggers[0] || mTriggers[1]) && (std::find(mMacroBlockOffsets.begin(), mMacroBlockOffsets.end(), pData.dwOfs) != mMacroBlockOffsets.end())))
+		if (autoBlock || ((mTriggers[0] || mTriggers[1] || mShoulders[0] || mShoulders[1]) && (std::find(mMacroBlockOffsets.begin(), mMacroBlockOffsets.end(), pData.dwOfs) != mMacroBlockOffsets.end())))
 		{
 			//Shift future elements back.
 			for (int x = (element + 1); x < numberOfElements; x++)
@@ -260,7 +282,7 @@ void CrossbarDirectInput::UpdateData(IDirectInputDevice8A* pDevice, DWORD cbObje
 void CrossbarDirectInput::UpdateState(IDirectInputDevice8A* pDevice, DWORD cbData, LPVOID lpvData)
 {
 	const auto joy = (DIJOYSTATE*)lpvData;
-	if (mTriggers[0] || mTriggers[1] || pInput->GetMenuActive())
+    if (mTriggers[0] || mTriggers[1] || mShoulders[0] || mShoulders[1] || pInput->GetMenuActive())
 	{
 		for (int x = 0; x < 4; x++)
 		{
@@ -276,7 +298,7 @@ void CrossbarDirectInput::UpdateState(IDirectInputDevice8A* pDevice, DWORD cbDat
 void CrossbarDirectInput::UpdateStateExtended(IDirectInputDevice8A* pDevice, DWORD cbData, LPVOID lpvData)
 {
 	const auto joy = (DIJOYSTATE2*)lpvData;
-	if (mTriggers[0] || mTriggers[1] || pInput->GetMenuActive())
+    if (mTriggers[0] || mTriggers[1] || mShoulders[0] || mShoulders[1] || pInput->GetMenuActive())
 	{
 		for (int x = 0; x < 4; x++)
 		{

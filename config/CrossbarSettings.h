@@ -9,7 +9,7 @@
 
 struct BindingMenuTheme_t
 {
-    Gdiplus::Image* pHint[12];
+    Gdiplus::Image* pHint[16];
     GDITextElementInfo* pPrompt;
     GDITextElementInfo* pMenu;
     GDITextElementInfo* pLabel;
@@ -148,6 +148,8 @@ struct CrossbarConfig_t
 
     int MainPanelX;
     int MainPanelY;
+    int ShoulderPanelX;
+    int ShoulderPanelY;
     int SubPanelX;
     int SubPanelY;
     int BindMenuX;
@@ -169,6 +171,8 @@ struct CrossbarConfig_t
         , UsePlaystationConfirm(false)
         , MainPanelX(-1)
         , MainPanelY(-150)
+        , ShoulderPanelX(-1)
+        , ShoulderPanelY(-300)
         , SubPanelX(-1)
         , SubPanelY(-150)
         , BindMenuX(-1)
