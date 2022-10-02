@@ -11,6 +11,8 @@ InputHandler::InputHandler(Crossbar* pCrossbar)
 	, mRightTapTimer(std::chrono::steady_clock::now())
 	, mMenuCombo(MenuComboState::Inactive)
 	, mMenuTimer(std::chrono::steady_clock::now())
+    , mActiveTimer(std::chrono::steady_clock::time_point{})
+    , mLastActiveState(false)
 {
 	
 }
@@ -25,10 +27,19 @@ bool InputHandler::GetGameMenuActive()
 }
 void InputHandler::HandleState(InputData_t input)
 {
-	pCrossbar->SetMacroMode(GetMacroMode(input));
-	HandleMenuCombo(input);
-	HandleButtons(input);
-	mLastState = input;
+    bool activeState = (GetForegroundWindow() == pCrossbar->AshitaCore()->GetProperties()->GetFinalFantasyHwnd());
+    if (!mLastActiveState && activeState)
+    {
+        mActiveTimer = std::chrono::steady_clock::now() + std::chrono::milliseconds(pCrossbar->Settings()->mInput.ActivateDelay);
+    }
+    mLastActiveState = activeState;
+    if (std::chrono::steady_clock::now() >= mActiveTimer)
+    {
+        pCrossbar->SetMacroMode(GetMacroMode(input));
+        HandleMenuCombo(input);
+        HandleButtons(input);
+        mLastState = input;
+    }
 }
 
 MacroMode InputHandler::GetMacroMode(InputData_t input)

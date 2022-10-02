@@ -60,6 +60,8 @@ private:
     std::chrono::steady_clock::time_point mRightTapTimer;
     MenuComboState mMenuCombo;
     std::chrono::steady_clock::time_point mMenuTimer;
+    std::chrono::steady_clock::time_point mActiveTimer;
+    bool mLastActiveState;
 
 public:
     InputHandler(Crossbar* pCrossbar);

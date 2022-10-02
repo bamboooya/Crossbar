@@ -436,3 +436,13 @@ void Crossbar::InitializeCrossbar()
     pBindings = new CrossbarBindings(m_AshitaCore, mCurrentName, mCurrentId, mCurrentJob, pSettings);
     pCanvas   = new CrossbarCanvas(m_AshitaCore, pSettings, pBindings);
 }
+
+IAshitaCore* Crossbar::AshitaCore()
+{
+    return m_AshitaCore;
+}
+
+CrossbarSettings* Crossbar::Settings()
+{
+    return pSettings;
+}

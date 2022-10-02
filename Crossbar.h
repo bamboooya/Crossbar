@@ -90,6 +90,10 @@ public:
     void Direct3DPresent(const RECT* pSourceRect, const RECT* pDestRect, HWND hDestWindowOverride, const RGNDATA* pDirtyRegion) override;
 
     void InitializeCrossbar();
+
+    IAshitaCore* AshitaCore();
+
+    CrossbarSettings* Settings();
 };
 
 #endif
