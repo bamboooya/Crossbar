@@ -22,8 +22,8 @@ CrossbarCanvas::CrossbarCanvas(IAshitaCore* pAshitaCore, CrossbarSettings* pSett
     pSubPrimitive = pAshitaCore->GetPrimitiveManager()->Create("CrossbarSub");
     mLastSingleMode = MacroMode::NoTrigger;
     
-    uint32_t window_width = Ashita::Registry::GetValue(Ashita::LanguageId::English, "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\PlayOnlineUS\\SquareEnix\\FinalFantasyXI", "0001");
-    uint32_t window_height = Ashita::Registry::GetValue(Ashita::LanguageId::English, "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\PlayOnlineUS\\SquareEnix\\FinalFantasyXI", "0002");
+    uint32_t window_width = pAshitaCore->GetConfigurationManager()->GetFloat("boot", "ffxi.registry", "0001", 3840);
+    uint32_t window_height  = pAshitaCore->GetConfigurationManager()->GetFloat("boot", "ffxi.registry", "0002", 2160);
 
     // main panel
     if (pSettings->mConfig.MainPanelX == -1)
