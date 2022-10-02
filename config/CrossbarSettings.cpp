@@ -576,7 +576,7 @@ void CrossbarSettings::WriteDefaultSettings(const char* path)
 
 		outStream << "    <!--Location for single trigger panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
 		outStream << "    <mainpanelx>-1</mainpanelx>\n";
-		outStream << "    <mainpanely>-150</mainpanely>\n";
+		outStream << "    <mainpanely>-500</mainpanely>\n";
 		outStream << "    \n";
         outStream << "    <!--Location for single shoulder panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
         outStream << "    <shoulderpanelx>-1</shoulderpanelx>\n";
@@ -584,7 +584,7 @@ void CrossbarSettings::WriteDefaultSettings(const char* path)
         outStream << "    \n";
 		outStream << "    <!--Location for dual trigger panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
 		outStream << "    <subpanelx>-1</subpanelx>\n";
-		outStream << "    <subpanely>-150</subpanely>\n";
+		outStream << "    <subpanely>-500</subpanely>\n";
 		outStream << "    \n";
 		outStream << "    <!--Location for menu.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
 		outStream << "    <bindmenux>-1</bindmenux>\n";
