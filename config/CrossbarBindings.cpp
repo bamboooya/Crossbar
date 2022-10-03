@@ -100,7 +100,13 @@ SingleMacroInfo_t::SingleMacroInfo_t(IAshitaCore* pAshitaCore, CrossbarSettings*
         }
         else if (_stricmp(subNode->name(), "command") == 0)
         {
+            // try to get command from node value
             strcpy_s(IconCommand, 256, subNode->value());
+            if (_stricmp(IconCommand, "") == 0)
+            {
+                // try to get command from CDATA
+                strcpy_s(IconCommand, 256, subNode->first_node()->value());
+            }
         }
         else if (_stricmp(subNode->name(), "text") == 0)
         {
