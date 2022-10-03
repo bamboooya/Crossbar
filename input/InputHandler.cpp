@@ -11,8 +11,7 @@ InputHandler::InputHandler(Crossbar* pCrossbar)
 	, mRightTapTimer(std::chrono::steady_clock::now())
 	, mMenuCombo(MenuComboState::Inactive)
 	, mMenuTimer(std::chrono::steady_clock::now())
-    , mActiveTimer(std::chrono::steady_clock::time_point{})
-    , mLastActiveState(false)
+    , mLastActiveState(GetForegroundWindow() == pCrossbar->AshitaCore()->GetProperties()->GetFinalFantasyHwnd())
 {
 	
 }
@@ -30,16 +29,16 @@ void InputHandler::HandleState(InputData_t input)
     bool activeState = (GetForegroundWindow() == pCrossbar->AshitaCore()->GetProperties()->GetFinalFantasyHwnd());
     if (!mLastActiveState && activeState)
     {
-        mActiveTimer = std::chrono::steady_clock::now() + std::chrono::milliseconds(pCrossbar->Settings()->mInput.ActivateDelay);
+		// prevent acting on buttons that are already held down when sitching windows
+        mLastActiveState = activeState;
+        mLastState = input;
+        return;
     }
     mLastActiveState = activeState;
-    if (std::chrono::steady_clock::now() >= mActiveTimer)
-    {
-        pCrossbar->SetMacroMode(GetMacroMode(input));
-        HandleMenuCombo(input);
-        HandleButtons(input);
-        mLastState = input;
-    }
+    pCrossbar->SetMacroMode(GetMacroMode(input));
+    HandleMenuCombo(input);
+    HandleButtons(input);
+    mLastState = input;
 }
 
 MacroMode InputHandler::GetMacroMode(InputData_t input)

@@ -404,8 +404,6 @@ CrossbarSettings::CrossbarSettings(IAshitaCore* pAshitaCore, const char* playerN
 					mInput.AllowDoubleTap = (_stricmp(subNode->value(), "true") == 0);
 				else if (_stricmp(subNode->name(), "taptimeout") == 0)
 					mInput.TapDuration = atoi(subNode->value());
-                else if (_stricmp(subNode->name(), "activatedelay") == 0)
-                    mInput.ActivateDelay = atoi(subNode->value());
 				else if (_stricmp(subNode->name(), "menuduration") == 0)
                     mInput.MenuDuration = atoi(subNode->value());
                 else if (_stricmp(subNode->name(), "enablexinput") == 0)
@@ -562,10 +560,6 @@ void CrossbarSettings::WriteDefaultSettings(const char* path)
 		outStream << "    <!--The length of time, in milliseconds, you are allotted to second-tap L2 or R2 when allowdoubletap is enabled.-->\n";
 		outStream << "    <taptimeout>300</taptimeout>\n";
 		outStream << "    \n";
-
-		outStream << "    <!--The min duration of time, in milliseconds, after activating a window to wait before accepting macro commands.-->\n";
-        outStream << "    <activatedelay>100</activatedelay>\n";
-        outStream << "    \n";
 
 		outStream << "    <!--The length of time, in milliseconds, you have to hold L1+L2+R1+R2 to open/close binding menu.-->\n";
 		outStream << "    <menuduration>1200</menuduration>\n";

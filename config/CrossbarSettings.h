@@ -107,7 +107,6 @@ struct InputConfig_t
 {
     int MenuDuration;
     int TapDuration;
-    int ActivateDelay;
     bool AllowDoubleTap;
     bool AllowPriority;
     bool AllowButtonsInMenu;
@@ -117,7 +116,6 @@ struct InputConfig_t
     InputConfig_t()
         : MenuDuration(1200)
         , TapDuration(600)
-        , ActivateDelay(100)
         , AllowDoubleTap(false)
         , AllowPriority(false)
         , AllowButtonsInMenu(false)
