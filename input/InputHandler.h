@@ -53,6 +53,7 @@ private:
 
     //State
     InputData_t mLastState;
+    bool mRightTriggerFirst;
     bool mRightShoulderFirst;
     bool mLeftTap;
     std::chrono::steady_clock::time_point mLeftTapTimer;

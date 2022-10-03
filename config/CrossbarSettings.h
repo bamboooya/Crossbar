@@ -148,10 +148,12 @@ struct CrossbarConfig_t
 
     int MainPanelX;
     int MainPanelY;
-    int ShoulderPanelX;
-    int ShoulderPanelY;
     int SubPanelX;
     int SubPanelY;
+    int ShoulderPanelX;
+    int ShoulderPanelY;
+    int ShoulderSubPanelX;
+    int ShoulderSubPanelY;
     int BindMenuX;
     int BindMenuY;
 
@@ -171,10 +173,12 @@ struct CrossbarConfig_t
         , UsePlaystationConfirm(false)
         , MainPanelX(-1)
         , MainPanelY(-500)
-        , ShoulderPanelX(-1)
-        , ShoulderPanelY(-300)
         , SubPanelX(-1)
         , SubPanelY(-500)
+        , ShoulderPanelX(-1)
+        , ShoulderPanelY(-300)
+        , ShoulderSubPanelX(-1)
+        , ShoulderSubPanelY(-300)
         , BindMenuX(-1)
         , BindMenuY(80)
         , UseLevelSync(false)

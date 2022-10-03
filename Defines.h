@@ -49,15 +49,17 @@ enum class MacroButton
 };
 enum class MacroMode
 {
-    LeftTrigger    = 0,
-    RightTrigger   = 1,
-    BothTriggersLT = 2,
-    BothTriggersRT = 3,
-    LeftTriggerDT  = 4,
-    RightTriggerDT = 5,
-    LeftShoulder   = 6,
-    RightShoulder  = 7,
-    NoTrigger      = 8
+    LeftTrigger     = 0,
+    RightTrigger    = 1,
+    BothTriggersLT  = 2,
+    BothTriggersRT  = 3,
+    LeftTriggerDT   = 4,
+    RightTriggerDT  = 5,
+    LeftShoulder    = 6,
+    RightShoulder   = 7,
+    BothShouldersLT = 8,
+    BothShouldersRT = 9,
+    NoTrigger       = 10
 };
 
 #define SAFE_DELETE(a) \

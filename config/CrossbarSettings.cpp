@@ -414,14 +414,18 @@ CrossbarSettings::CrossbarSettings(IAshitaCore* pAshitaCore, const char* playerN
 					mConfig.MainPanelX = atoi(subNode->value());
 				else if (_stricmp(subNode->name(), "mainpanely") == 0)
 					mConfig.MainPanelY = atoi(subNode->value());
-                else if (_stricmp(subNode->name(), "shoulderpanelx") == 0)
-                    mConfig.ShoulderPanelX = atoi(subNode->value());
-                else if (_stricmp(subNode->name(), "shoulderpanely") == 0)
-                    mConfig.ShoulderPanelY = atoi(subNode->value());
 				else if (_stricmp(subNode->name(), "subpanelx") == 0)
 					mConfig.SubPanelX = atoi(subNode->value());
 				else if (_stricmp(subNode->name(), "subpanely") == 0)
 					mConfig.SubPanelY = atoi(subNode->value());
+                else if (_stricmp(subNode->name(), "shoulderpanelx") == 0)
+                    mConfig.ShoulderPanelX = atoi(subNode->value());
+                else if (_stricmp(subNode->name(), "shoulderpanely") == 0)
+                    mConfig.ShoulderPanelY = atoi(subNode->value());
+                else if (_stricmp(subNode->name(), "shouldersubpanelx") == 0)
+                    mConfig.ShoulderSubPanelX = atoi(subNode->value());
+                else if (_stricmp(subNode->name(), "shouldersubpanely") == 0)
+                    mConfig.ShoulderSubPanelY = atoi(subNode->value());
 				else if (_stricmp(subNode->name(), "bindmenux") == 0)
 					mConfig.BindMenuX = atoi(subNode->value());
 				else if (_stricmp(subNode->name(), "bindmenuy") == 0)
@@ -578,14 +582,18 @@ void CrossbarSettings::WriteDefaultSettings(const char* path)
 		outStream << "    <mainpanelx>-1</mainpanelx>\n";
 		outStream << "    <mainpanely>-500</mainpanely>\n";
 		outStream << "    \n";
-        outStream << "    <!--Location for single shoulder panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
-        outStream << "    <shoulderpanelx>-1</shoulderpanelx>\n";
-        outStream << "    <shoulderpanely>-300</shoulderpanely>\n";
-        outStream << "    \n";
 		outStream << "    <!--Location for dual trigger panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
 		outStream << "    <subpanelx>-1</subpanelx>\n";
 		outStream << "    <subpanely>-500</subpanely>\n";
 		outStream << "    \n";
+        outStream << "    <!--Location for single shoulder panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
+        outStream << "    <shoulderpanelx>-1</shoulderpanelx>\n";
+        outStream << "    <shoulderpanely>-300</shoulderpanely>\n";
+        outStream << "    \n";
+        outStream << "    <!--Location for dual shoulder panel.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
+        outStream << "    <shouldersubpanelx>-1</shouldersubpanelx>\n";
+        outStream << "    <shouldersubpanely>-500</shouldersubpanely>\n";
+        outStream << "    \n";
 		outStream << "    <!--Location for menu.  -1 in x will center.  Negative value in y will leave that value as a gap at bottom.-->\n";
 		outStream << "    <bindmenux>-1</bindmenux>\n";
 		outStream << "    <bindmenuy>80</bindmenuy>\n";

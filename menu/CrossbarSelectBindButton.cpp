@@ -84,7 +84,11 @@ void CrossbarSelectBindButton::HandleMacro(MacroButton button, MacroMode mode)
 		{MacroMode::BothTriggersLT, "LT > RT + "},
 		{MacroMode::BothTriggersRT, "RT > LT + "},
 		{MacroMode::LeftTriggerDT, "LT(double) + "},
-		{MacroMode::RightTriggerDT, "RT(double) + "}
+		{MacroMode::RightTriggerDT, "RT(double) + "},
+        {MacroMode::LeftShoulder, "L1 + "},
+        {MacroMode::RightShoulder, "R1 + "},
+        {MacroMode::BothShouldersLT, "L1 > R1 + "},
+        {MacroMode::BothShouldersRT, "R1 > L1 + "}
 	};
 
 	std::map<MacroButton, std::string>::iterator iter = buttonNames.find(button);

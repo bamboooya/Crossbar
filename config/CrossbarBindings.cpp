@@ -358,6 +358,14 @@ SingleBindingInfo_t::SingleBindingInfo_t(IAshitaCore* pAshitaCore, CrossbarSetti
         {
             Triggers[(int)MacroMode::RightShoulder] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
         }
+        else if (strcmp(subNode->name(), "bothshoulderslt") == 0)
+        {
+            Triggers[(int)MacroMode::BothShouldersLT] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
+        }
+        else if (strcmp(subNode->name(), "bothshouldersrt") == 0)
+        {
+            Triggers[(int)MacroMode::BothShouldersRT] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
+        }
         else if (strcmp(subNode->name(), "notrigger") == 0)
         {
             Triggers[(int)MacroMode::NoTrigger] = SingleTriggerInfo_t(pAshitaCore, pSettings, subNode);
@@ -412,6 +420,18 @@ void SingleBindingInfo_t::Write(std::ofstream* stream, int depth)
     *stream << std::string(depth * 4, ' ') << "<rightshoulder>\n";
     Triggers[(int)MacroMode::RightShoulder].Write(stream, depth + 1);
     *stream << std::string(depth * 4, ' ') << "</rightshoulder>\n";
+    *stream << std::string(depth * 4, ' ') << "\n";
+
+    *stream << std::string(depth * 4, ' ') << "<!--These bindings are for L1>R1, but also used for L1+R1 if allowpriority is disabled.-->\n";
+    *stream << std::string(depth * 4, ' ') << "<bothshoulderslt>\n";
+    Triggers[(int)MacroMode::BothShouldersLT].Write(stream, depth + 1);
+    *stream << std::string(depth * 4, ' ') << "</bothshoulderslt>\n";
+    *stream << std::string(depth * 4, ' ') << "\n";
+
+    *stream << std::string(depth * 4, ' ') << "<!--These bindings are for R1>L1, and will not be used if allowpriority is disabled.-->\n";
+    *stream << std::string(depth * 4, ' ') << "<bothshouldersrt>\n";
+    Triggers[(int)MacroMode::BothShouldersRT].Write(stream, depth + 1);
+    *stream << std::string(depth * 4, ' ') << "</bothshouldersrt>\n";
     *stream << std::string(depth * 4, ' ') << "\n";
 
     *stream << std::string(depth * 4, ' ') << "<!--These bindings are for no trigger only.-->\n";

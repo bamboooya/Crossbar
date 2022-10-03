@@ -4,6 +4,7 @@ InputHandler::InputHandler(Crossbar* pCrossbar)
 	: pCrossbar(pCrossbar)
 	, mConfig(InputConfig_t())
 	, mLastState(InputData_t())
+    , mRightTriggerFirst(false)
 	, mRightShoulderFirst(false)
 	, mLeftTap(false)
 	, mLeftTapTimer(std::chrono::steady_clock::now())
@@ -53,7 +54,7 @@ MacroMode InputHandler::GetMacroMode(InputData_t input)
 				mLeftTap = true;
 			}
 			mLeftTapTimer = std::chrono::steady_clock::now() + std::chrono::milliseconds(mConfig.TapDuration);
-			mRightShoulderFirst = false;
+            mRightTriggerFirst = false;
 		}
 	}
 	else
@@ -71,7 +72,7 @@ MacroMode InputHandler::GetMacroMode(InputData_t input)
 				mRightTap = true;
 			}
 			mRightTapTimer = std::chrono::steady_clock::now() + std::chrono::milliseconds(mConfig.TapDuration);
-			mRightShoulderFirst = true;
+            mRightTriggerFirst = true;
         }
 	}
 	else
@@ -79,6 +80,21 @@ MacroMode InputHandler::GetMacroMode(InputData_t input)
 		mRightTap = false;
 	}
 
+	if (input.LeftShoulder)
+    {
+        if ((!mLastState.LeftShoulder) && (!mLastState.RightShoulder))
+        {
+            mRightShoulderFirst = false;
+        }
+    }
+
+	if (input.RightShoulder)
+    {
+        if ((!mLastState.LeftShoulder) && (!mLastState.RightShoulder))
+        {
+            mRightShoulderFirst = true;
+        }
+    }
 
 	if (input.LeftTrigger)
 	{
@@ -89,7 +105,7 @@ MacroMode InputHandler::GetMacroMode(InputData_t input)
             mRightTap     = false;
             mLeftTapTimer = std::chrono::steady_clock::now() - std::chrono::milliseconds(1);
             mRightTapTimer = std::chrono::steady_clock::now() - std::chrono::milliseconds(1);
-			if ((mConfig.AllowPriority) && (mRightShoulderFirst))
+            if ((mConfig.AllowPriority) && (mRightTriggerFirst))
 				return MacroMode::BothTriggersRT;
 			else
 				return MacroMode::BothTriggersLT;
@@ -108,7 +124,15 @@ MacroMode InputHandler::GetMacroMode(InputData_t input)
 	}
     else if (input.LeftShoulder)
     {
-        return MacroMode::LeftShoulder;
+        if (input.RightShoulder)
+        {
+            if ((mConfig.AllowPriority) && (mRightShoulderFirst))
+                return MacroMode::BothShouldersRT;
+            else
+                return MacroMode::BothShouldersLT;
+        }
+        else
+            return MacroMode::LeftShoulder;
     }
     else if (input.RightShoulder)
     {

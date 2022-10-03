@@ -56,7 +56,7 @@ struct SingleTriggerInfo_t
 };
 struct SingleBindingInfo_t
 {
-    SingleTriggerInfo_t Triggers[9];
+    SingleTriggerInfo_t Triggers[11];
 
     SingleBindingInfo_t();
     SingleBindingInfo_t(IAshitaCore* pAshitaCore, CrossbarSettings* pSettings, xml_node<>* baseNode);

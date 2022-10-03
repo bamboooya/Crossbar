@@ -20,11 +20,13 @@ private:
     IPrimitiveObject* pShoulderPrimitive;
 	GdiDIB* pSubDisplay;
 	IPrimitiveObject* pSubPrimitive;
+    GdiDIB* pShoulderSubDisplay;
+    IPrimitiveObject* pShoulderSubPrimitive;
 
 	CrossbarBindings* pBindings;
 	CrossbarSettings* pSettings;
 
-	CrossbarMacroSet* pMacros[9];
+	CrossbarMacroSet* pMacros[11];
     MacroMode mLastSingleMode;
 
 public:
