@@ -1,63 +1,52 @@
 #ifndef __ASHITA_CrossbarDirectInput_H_INCLUDED__
 #define __ASHITA_CrossbarDirectInput_H_INCLUDED__
 #include "InputHandler.h"
-#include "C:\Ashita 4\plugins\sdk\d3d8\includes\dinput.h"
-#pragma comment(lib, "C:/Ashita 4/plugins/sdk/d3d8/lib/dinput8.lib")
-#pragma comment(lib, "C:/Ashita 4/plugins/sdk/d3d8/lib/dxguid.lib")
 #include <list>
 
-#define RBUFP(p,pos) (((uint8_t*)(p)) + (pos))
-#define Read32(p,pos) (*(uint32_t*)RBUFP((p),(pos)))
-
-typedef HRESULT (WINAPI* DIGetDeviceState)(IDirectInputDevice8A*, DWORD, LPVOID);
-typedef HRESULT (WINAPI* DIGetDeviceData)(IDirectInputDevice8A*, DWORD, LPDIDEVICEOBJECTDATA, LPDWORD, DWORD);
+//#define NINTENDOSWITCH
 
 class CrossbarDirectInput
 {
 private:
-    IDirectInput8A* pDirectInput;
-    LPDIRECTINPUTDEVICE8 pDirectInputDevice;
-    DIGetDeviceState Real_GetDeviceState;
-    DIGetDeviceData Real_GetDeviceData;
-    bool mHookActive;
+    IAshitaCore* pAshitaCore;
     InputHandler* pInput;
-    DWORD pvTable;
+    bool mHookActive;
+    InputData_t m_ControllerState;
 
-    std::list<int> mAlwaysBlockOffsets =
+    #ifdef NINTENDOSWITCH
+    std::list<uint32_t> mAlwaysBlockOffsets =
     {
-        12, //L2 Axis
-        16, //R2 Axis
         offsetof(DIJOYSTATE, rgbButtons) + 6,
         offsetof(DIJOYSTATE, rgbButtons) + 7,
-        offsetof(DIJOYSTATE, rgbButtons) + 4,
-        offsetof(DIJOYSTATE, rgbButtons) + 5
     };
-
-    std::list<int> mMacroBlockOffsets = {
+    #else
+    std::list<uint32_t> mAlwaysBlockOffsets = {
+        12, //L2 Axis
+        16, //R2 Axis
+        //offsetof(DIJOYSTATE, rgbButtons) + 4, // upstream removed
+        //offsetof(DIJOYSTATE, rgbButtons) + 5, // upstream removed
+        //offsetof(DIJOYSTATE, rgbButtons) + 6,
+        //offsetof(DIJOYSTATE, rgbButtons) + 7
+    };
+    #endif
+    std::list<uint32_t> mMacroBlockOffsets = {
         offsetof(DIJOYSTATE, rgbButtons) + 0,
         offsetof(DIJOYSTATE, rgbButtons) + 1,
         offsetof(DIJOYSTATE, rgbButtons) + 2,
         offsetof(DIJOYSTATE, rgbButtons) + 3,
+        offsetof(DIJOYSTATE, rgbButtons) + 4, // upstream added
+        offsetof(DIJOYSTATE, rgbButtons) + 5, // upstream added
+        offsetof(DIJOYSTATE, rgbButtons) + 6, // upstream removed
+        offsetof(DIJOYSTATE, rgbButtons) + 7, // upstream removed
         offsetof(DIJOYSTATE, rgdwPOV)
     };
 
-    bool mTriggers[2];
-    bool mShoulders[2];
-
 public:
-    CrossbarDirectInput(InputHandler* pInput);
+    CrossbarDirectInput(InputHandler* pInput, IAshitaCore* pAshitaCore);
     ~CrossbarDirectInput();
-    bool AttemptHook();
     bool GetHookActive();
-    HRESULT GetDeviceState(IDirectInputDevice8A* pDevice, DWORD cbData, LPVOID lpvData);
-    HRESULT GetDeviceData(IDirectInputDevice8A* pDevice, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags);
-
-    void HandleFoundDevice(GUID guid);
-    void HandleState(DIJOYSTATE* pState);
-    void HandleStateExtended(DIJOYSTATE2* pState);
-    void UpdateData(IDirectInputDevice8A* pDevice, DWORD cbObjectData, LPDIDEVICEOBJECTDATA rgdod, LPDWORD pdwInOut, DWORD dwFlags);
-    void UpdateState(IDirectInputDevice8A* pDevice, DWORD cbData, LPVOID lpvData);
-    void UpdateStateExtended(IDirectInputDevice8A* pDevice, DWORD cbData, LPVOID lpvData);
+    BOOL ControllerCallback(uint32_t* offset, int32_t* state, bool blocked, bool injected);
+    HRESULT GetDeviceState(DWORD cbData, LPVOID lpvData);
 };
 
 #endif

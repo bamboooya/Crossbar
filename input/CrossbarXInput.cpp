@@ -10,82 +10,42 @@ DWORD __stdcall Mine_XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	return gpXInput->XInputGetState(dwUserIndex, pState);
 }
 
-CrossbarXInput::CrossbarXInput(InputHandler* pInput)
+CrossbarXInput::CrossbarXInput(InputHandler* pInput, IAshitaCore* pAshitaCore)
 	: pInput(pInput)
+    , pAshitaCore(pAshitaCore)
 {
 	gpXInput = this;
-	Real_XInputGetState = nullptr;
-	mHookActive = false;
+    mHookActive         = false;
+    pAshitaCore->GetInputManager()->GetXInput()->AddCallback("Crossbar_Plugin_CB", &Mine_XInputGetState, nullptr);
 }
 
 CrossbarXInput::~CrossbarXInput()
 {
-	if (mHookActive)
-	{
-		DetourTransactionBegin();
-		DetourUpdateThread(GetCurrentThread());
-		DetourDetach(&(LPVOID&)Real_XInputGetState, Mine_XInputGetState);
-		DetourTransactionCommit();
-	}
+    pAshitaCore->GetInputManager()->GetXInput()->RemoveCallback("Crossbar_Plugin_CB");
 }
 
 bool CrossbarXInput::GetHookActive()
 {
     return mHookActive;
 }
-bool CrossbarXInput::AttemptHook()
-{
-	if (mHookActive)
-		return false;
 
-	HMODULE hMods[1024];
-	HANDLE hProcess;
-	DWORD cbNeeded;
-	unsigned int i;
-
-	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
-		PROCESS_VM_READ,
-		FALSE, GetCurrentProcessId());
-	if (NULL == hProcess)
-		return 1;
-
-	if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded))
-	{
-		for (i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
-		{
-			TCHAR szModName[MAX_PATH];
-			if (GetModuleFileNameEx(hProcess, hMods[i], szModName, sizeof(szModName) / sizeof(TCHAR)))
-			{
-				FARPROC address = GetProcAddress(hMods[i], "XInputGetState");
-				if ((strstr(szModName, "XINPUT1_3.dll")) && (address))
-				{
-					Real_XInputGetState = (XInputGetStateFunc)address;
-					::DetourTransactionBegin();
-					::DetourUpdateThread(::GetCurrentThread());
-					uint32_t result = ::DetourAttach(&(PVOID&)Real_XInputGetState, Mine_XInputGetState);
-					uint32_t result2 = ::DetourTransactionCommit();
-					if ((result == 0) && (result2 == 0))
-					{
-						mHookActive = true;
-						break;
-					}
-				}
-			}
-		}
-	}
-	CloseHandle(hProcess);
-	return mHookActive;
-}
 DWORD CrossbarXInput::XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	DWORD retValue = Real_XInputGetState(dwUserIndex, pState);
-    if (pInput->GetGameMenuActive())
-        return retValue;
+    if (!mHookActive)
+    {
+        mHookActive = true;
+        pAshitaCore->GetChatManager()->Writef(0, false, "%s%s", Ashita::Chat::Header("Crossbar").c_str(), Ashita::Chat::Message("XInput detected!").c_str());
+    }
 
-	HandleState(dwUserIndex, pState);
-	UpdateState(dwUserIndex, pState);
-	return retValue;
+    if (!pInput->GetGameMenuActive())
+    {
+        HandleState(dwUserIndex, pState);
+        UpdateState(dwUserIndex, pState);
+    }
+
+	return ERROR_SUCCESS;
 }
+
 void CrossbarXInput::HandleState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	InputData_t data;
@@ -107,6 +67,7 @@ void CrossbarXInput::HandleState(DWORD dwUserIndex, XINPUT_STATE* pState)
     data.RightStickPress = (pState->Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB);
 	pInput->HandleState(data);
 }
+
 void CrossbarXInput::UpdateState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
     if ((pState->Gamepad.bLeftTrigger) || (pState->Gamepad.bRightTrigger) || (pState->Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) || (pState->Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) || (pInput->GetMenuActive()))
